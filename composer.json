@@ -1,0 +1,22 @@
+{
+    "name": "dangkhoa/plugin-manager",
+    "description": "Plugin manager",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Dangkhoa\\PluginManager\\": "src/",
+            "Dangkhoa\\Plugins\\": "Plugins/"
+        }
+    },
+    "authors": [
+        {
+            "name": "khoanguyen",
+            "email": "nguyentudangkhoa@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "symfony/yaml": "*"
+    },
+    "prefer-stable": true
+}
