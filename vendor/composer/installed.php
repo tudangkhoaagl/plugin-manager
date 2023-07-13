@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'dangkhoa/plugin-manager',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => NULL,
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => '8930fb05dd4f1b45d9a7d2ec208e066e535e7caa',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'dangkhoa/plugin-manager' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => NULL,
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '8930fb05dd4f1b45d9a7d2ec208e066e535e7caa',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
