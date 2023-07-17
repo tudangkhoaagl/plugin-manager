@@ -132,7 +132,7 @@ class PluginManagerServiceProvider extends ServiceProvider
         }
 
         foreach ($plugins as $plugin) {
-            if (! is_dir('/../../Plugins/' . $plugin)) {
+            if (! is_dir(__DIR__ . '/../../Plugins/' . $plugin)) {
                 continue;
             }
 
