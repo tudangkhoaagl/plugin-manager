@@ -64,19 +64,19 @@ class PluginManagerServiceProvider extends ServiceProvider
 
         // Publish tag
         $this->publishes([
-            __DIR__ . '/../../lang' => $this->app->langPath('vendor/plugin_manager'),
-        ], 'plugin_manager-lang');
+            __DIR__ . '/../../lang' => $this->app->langPath('plugin_manager'),
+        ], 'plugin_manager_lang');
 
         $this->publishes([
-            __DIR__ . '/../../resources/views' => resource_path('views/vendor/plugin_manager'),
+            __DIR__ . '/../../resources/views' => resource_path('views/plugin_manager'),
         ], 'plugin_manager_views');
 
         $this->publishes([
-            __DIR__ . '/../../database/migrations' => resource_path('migrations/vendor/plugin_manager'),
+            __DIR__ . '/../../database/migrations' => base_path('database/migrations/plugin_manager'),
         ], 'plugin_manager_migration');
 
         $this->publishes([
-            __DIR__ . '/../../public' => public_path('vendor/plugin_manager'),
+            __DIR__ . '/../../public' => public_path('plugin_manager'),
         ], 'plugin_manager_public');
 
         $this->publishes([
