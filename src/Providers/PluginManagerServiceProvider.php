@@ -132,6 +132,10 @@ class PluginManagerServiceProvider extends ServiceProvider
         }
 
         foreach ($plugins as $plugin) {
+            if (! is_dir('/../../Plugins/' . $plugin)) {
+                continue;
+            }
+
             $yamlContents = Yaml::parse(file_get_contents(__DIR__ . '/../../Plugins/' . $plugin . '/' . strtolower($plugin) . '.yaml'));
             if (
                 count($yamlContents) < 1
