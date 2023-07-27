@@ -2,10 +2,12 @@
 
 namespace Dangkhoa\PluginManager\Providers;
 
+use Dangkhoa\PluginManager\Console\Commands\CreatePluginMigration;
 use Dangkhoa\PluginManager\Console\Commands\PluginManagerMigration;
 use Exception;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Yaml\Yaml;
 
@@ -76,7 +78,7 @@ class PluginManagerServiceProvider extends ServiceProvider
         ], 'plugin_manager_migration');
 
         $this->publishes([
-            __DIR__ . '/../../public' => public_path('plugin_manager'),
+            __DIR__ . '/../../public' => public_path('assets/plugin_manager'),
         ], 'plugin_manager_public');
 
         $this->publishes([
@@ -86,6 +88,7 @@ class PluginManagerServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 PluginManagerMigration::class,
+                CreatePluginMigration::class
             ]);
         }
     }
@@ -131,51 +134,55 @@ class PluginManagerServiceProvider extends ServiceProvider
             return;
         }
 
-        foreach ($plugins as $plugin) {
-            if (! is_dir(__DIR__ . '/../../Plugins/' . $plugin)) {
-                continue;
-            }
 
-            $yamlContents = Yaml::parse(file_get_contents(__DIR__ . '/../../Plugins/' . $plugin . '/' . strtolower($plugin) . '.yaml'));
-            if (
-                count($yamlContents) < 1
-                || (
-                    empty($yamlContents['name'])
-                    && empty($yamlContents['machine_name'])
-                    && empty($yamlContents['service_provider'])
-                )
-            ) {
-                continue;
-            }
 
-            if (! $machine = DB::table('plugins')->where('machine_name', $yamlContents['machine_name'])->first()) {
-                DB::table('plugins')->insert([
-                    'name' => $yamlContents['name'],
-                    'machine_name' => $yamlContents['machine_name'],
-                    'provider' => $yamlContents['service_provider'],
-                    'description' => $yamlContents['description'] ?? '',
-                    'priovity' => DB::table('plugins')->count() > 0 ? DB::table('plugins')->latest()->first()->priovity + 1 : 1,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            } else {
-                DB::table('plugins')->where('machine_name', $yamlContents['machine_name'])->update([
-                    'name' => $yamlContents['name'],
-                    'machine_name' => $yamlContents['machine_name'],
-                    'provider' => $yamlContents['service_provider'],
-                    'description' => $yamlContents['description'] ?? '',
-                    'priovity' => DB::table('plugins')->count() > 0 ? DB::table('plugins')->latest()->first()->priovity + 1 : 1,
-                    'updated_at' => now(),
-                ]);
+        if(Schema::hasTable('plugins')) {
+            foreach ($plugins as $plugin) {
+                if (! is_dir(__DIR__ . '/../../Plugins/' . $plugin)) {
+                    continue;
+                }
 
-                $machine = DB::table('plugins')->where('machine_name', $yamlContents['machine_name'])->first();
-            }
+                $yamlContents = Yaml::parse(file_get_contents(__DIR__ . '/../../Plugins/' . $plugin . '/' . strtolower($plugin) . '.yaml'));
+                if (
+                    count($yamlContents) < 1
+                    || (
+                        empty($yamlContents['name'])
+                        && empty($yamlContents['machine_name'])
+                        && empty($yamlContents['service_provider'])
+                    )
+                ) {
+                    continue;
+                }
 
-            if (
-                $machine
-                && $machine->status === PLUGIN_STATUS_ENABLE
-            ) {
-                $this->providers[] = $yamlContents['service_provider'];
+                if (! $machine = DB::table('plugins')->where('machine_name', $yamlContents['machine_name'])->first()) {
+                    DB::table('plugins')->insert([
+                        'name' => $yamlContents['name'],
+                        'machine_name' => $yamlContents['machine_name'],
+                        'provider' => $yamlContents['service_provider'],
+                        'description' => $yamlContents['description'] ?? '',
+                        'priovity' => DB::table('plugins')->count() > 0 ? DB::table('plugins')->latest()->first()->priovity + 1 : 1,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                } else {
+                    DB::table('plugins')->where('machine_name', $yamlContents['machine_name'])->update([
+                        'name' => $yamlContents['name'],
+                        'machine_name' => $yamlContents['machine_name'],
+                        'provider' => $yamlContents['service_provider'],
+                        'description' => $yamlContents['description'] ?? '',
+                        'priovity' => DB::table('plugins')->count() > 0 ? DB::table('plugins')->latest()->first()->priovity + 1 : 1,
+                        'updated_at' => now(),
+                    ]);
+
+                    $machine = DB::table('plugins')->where('machine_name', $yamlContents['machine_name'])->first();
+                }
+
+                if (
+                    $machine
+                    && $machine->status === PLUGIN_STATUS_ENABLE
+                ) {
+                    $this->providers[] = $yamlContents['service_provider'];
+                }
             }
         }
     }
