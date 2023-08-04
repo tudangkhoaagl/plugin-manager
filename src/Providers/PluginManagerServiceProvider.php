@@ -45,8 +45,6 @@ class PluginManagerServiceProvider extends ServiceProvider
 
         $this->getYamlFile();
 
-        $this->registerProviders();
-
         $this->registerRoute();
     }
 
@@ -90,18 +88,6 @@ class PluginManagerServiceProvider extends ServiceProvider
                 PluginManagerMigration::class,
                 CreatePluginMigration::class
             ]);
-        }
-    }
-
-    /**
-     * Summary of registerProvoiders
-     *
-     * @return void
-     */
-    protected function registerProviders(): void
-    {
-        foreach ($this->providers as $provider) {
-            $this->app->register($provider);
         }
     }
 
@@ -181,7 +167,9 @@ class PluginManagerServiceProvider extends ServiceProvider
                     $machine
                     && $machine->status === PLUGIN_STATUS_ENABLE
                 ) {
-                    $this->providers[] = $yamlContents['service_provider'];
+
+                    $this->app->register($yamlContents['service_provider']);
+
                 }
             }
         }
