@@ -133,8 +133,6 @@ class PluginManagerServiceProvider extends BaseServiceProvider
             return;
         }
 
-
-
         if(Schema::hasTable('plugins')) {
             foreach ($plugins as $plugin) {
                 if (! is_dir(__DIR__ . '/../../Plugins/' . $plugin)) {
@@ -160,6 +158,7 @@ class PluginManagerServiceProvider extends BaseServiceProvider
                         'provider' => $yamlContents['service_provider'],
                         'description' => $yamlContents['description'] ?? '',
                         'priovity' => DB::table('plugins')->count() > 0 ? DB::table('plugins')->latest()->first()->priovity + 1 : 1,
+                        'status' => PLUGIN_STATUS_ENABLE,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
@@ -180,9 +179,7 @@ class PluginManagerServiceProvider extends BaseServiceProvider
                     $machine
                     && $machine->status === PLUGIN_STATUS_ENABLE
                 ) {
-
                     $this->app->register($yamlContents['service_provider']);
-
                 }
             }
         }
