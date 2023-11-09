@@ -4,14 +4,16 @@ namespace Dangkhoa\PluginManager\Providers;
 
 use Dangkhoa\PluginManager\Console\Commands\CreatePluginMigration;
 use Dangkhoa\PluginManager\Console\Commands\PluginManagerMigration;
+use Dangkhoa\PluginManager\Console\Commands\UpdateAssetPlugin;
+use Dangkhoa\PluginManager\View\Composers\BaseMenuComposer;
 use Exception;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
 use Symfony\Component\Yaml\Yaml;
 
-class PluginManagerServiceProvider extends ServiceProvider
+class PluginManagerServiceProvider extends BaseServiceProvider
 {
     /**
      * Summary of providers
@@ -46,6 +48,15 @@ class PluginManagerServiceProvider extends ServiceProvider
         $this->getYamlFile();
 
         $this->registerRoute();
+        $this->registerMenu([
+            [
+                'label' => 'Plugin',
+                'icon' => 'fas fa-user',
+                'route_name' => 'backend.plugin',
+                'priority' => 1,
+                'children' => [],
+            ]
+        ]);
     }
 
     /**
@@ -86,9 +97,11 @@ class PluginManagerServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 PluginManagerMigration::class,
-                CreatePluginMigration::class
+                CreatePluginMigration::class,
+                UpdateAssetPlugin::class,
             ]);
         }
+        parent::boot();
     }
 
     /**
